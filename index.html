@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Калькулятор окупаемости дозатора • Атлас Про</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-page:    #e8f0f7;
+    --bg-white:   #ffffff;
+    --bg-input:   #ffffff;
+    --border:     #d0dce8;
+    --border-focus: #2b7de9;
+    --blue:       #2b7de9;
+    --blue-dark:  #1a5dbf;
+    --blue-light: #e8f2fd;
+    --blue-text:  #2563a8;
+    --orange:     #f47c20;
+    --orange-dark:#d96310;
+    --green:      #1a9e5c;
+    --green-bg:   #e8f7f0;
+    --red:        #d93b3b;
+    --red-bg:     #fde8e8;
+    --text:       #1a2332;
+    --text-2:     #4a5568;
+    --text-3:     #8a9ab0;
+    --shadow:     0 2px 12px rgba(43,125,233,0.10);
+    --shadow-lg:  0 4px 24px rgba(43,125,233,0.13);
+    --radius:     10px;
+    --radius-sm:  6px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg-page);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--bg-white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 70px;
+    box-shadow: 0 1px 4px rgba(43,125,233,0.08);
+  }
+  .header-left { display: flex; align-items: center; gap: 20px; }
+  .logo-wrap { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+
+  /* SVG logo mark — triangle like Atlas */
+  .logo-icon { width: 42px; height: 42px; }
+
+  .logo-text-block { display: flex; flex-direction: column; line-height: 1; }
+  .logo-name {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--blue-dark);
+    text-transform: uppercase;
+  }
+  .logo-tagline {
+    font-size: 8px;
+    color: var(--text-3);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-top: 3px;
+    line-height: 1.3;
+  }
+  .header-divider {
+    width: 1px; height: 36px;
+    background: var(--border);
+  }
+  .header-title h1 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .header-title p {
+    font-size: 12px;
+    color: var(--text-3);
+    margin-top: 2px;
+  }
+  .btn-orange {
+    background: var(--orange);
+    color: #fff;
+    border: none;
+    padding: 9px 20px;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background .15s;
+    white-space: nowrap;
+  }
+  .btn-orange:hover { background: var(--orange-dark); }
+
+  /* ── LAYOUT ── */
+  .app {
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    gap: 20px;
+    padding: 24px 28px;
+    max-width: 1400px;
+    margin: 0 auto;
+    align-items: start;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--bg-white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 22px 20px;
+    margin-bottom: 16px;
+  }
+  .card:last-child { margin-bottom: 0; }
+
+  .card-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--blue-text);
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--blue-light);
+  }
+
+  /* ── FIELDS ── */
+  .field { margin-bottom: 12px; }
+  .field:last-child { margin-bottom: 0; }
+  label {
+    display: block;
+    font-size: 12px;
+    color: var(--text-2);
+    margin-bottom: 5px;
+    font-weight: 500;
+  }
+  label .unit { color: var(--text-3); font-weight: 400; }
+  input[type="number"], input[type="text"] {
+    width: 100%;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 8px 11px;
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  input:focus {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px rgba(43,125,233,.12);
+  }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+
+  /* ── ITEM CARDS (dozator/product) ── */
+  .doz-item {
+    background: #f7fafd;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    margin-bottom: 10px;
+    border-top: 3px solid var(--blue);
+  }
+  .doz-item:last-child { margin-bottom: 0; }
+  .prod-item {
+    background: #fffbf5;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    margin-bottom: 10px;
+    border-top: 3px solid var(--orange);
+  }
+  .prod-item:last-child { margin-bottom: 0; }
+
+  .item-hd {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .item-name { font-size: 12px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+  .doz-item .item-name { color: var(--blue); }
+  .prod-item .item-name { color: var(--orange); }
+
+  .btn-del {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-3);
+    width: 22px; height: 22px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .15s;
+  }
+  .btn-del:hover { border-color: var(--red); color: var(--red); background: var(--red-bg); }
+
+  /* Sub-section inside item */
+  .sub-sec {
+    background: var(--bg-white);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 10px 12px;
+    margin-top: 10px;
+  }
+  .sub-sec-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+
+  /* Live preview badge */
+  .derived {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--blue-light);
+    border: 1px solid #c5ddf7;
+    border-radius: 5px;
+    padding: 5px 9px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--blue-text);
+    margin-top: 8px;
+  }
+
+  /* ── ADD / ACTION BUTTONS ── */
+  .btn-add {
+    width: 100%;
+    background: transparent;
+    border: 1px dashed #b0c8e4;
+    color: var(--blue);
+    padding: 9px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all .15s;
+    margin-top: 8px;
+  }
+  .btn-add:hover { border-color: var(--blue); background: var(--blue-light); }
+
+  .btn-add-orange {
+    border-color: #f5c89a;
+    color: var(--orange);
+  }
+  .btn-add-orange:hover { border-color: var(--orange); background: #fff5ec; }
+
+  .btn-calc {
+    width: 100%;
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    padding: 13px;
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .15s, box-shadow .15s;
+    letter-spacing: 0.3px;
+  }
+  .btn-calc:hover { background: var(--blue-dark); box-shadow: 0 4px 16px rgba(43,125,233,.35); }
+  .btn-calc:active { transform: scale(.99); }
+
+  /* ── SECTION TITLE ── */
+  .sec-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--blue-text);
+    margin-bottom: 10px;
+  }
+
+  /* ── RESULTS ── */
+  .placeholder {
+    background: var(--bg-white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 60px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-3);
+    text-align: center;
+  }
+  .placeholder .ico { font-size: 40px; opacity: .35; }
+  .placeholder p { font-size: 13px; line-height: 1.7; }
+
+  /* KPI CARDS */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .kpi {
+    background: var(--bg-white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .kpi.c-blue::after   { background: var(--blue); }
+  .kpi.c-green::after  { background: var(--green); }
+  .kpi.c-orange::after { background: var(--orange); }
+
+  .kpi-lbl {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .kpi-val {
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .kpi.c-blue .kpi-val   { color: var(--blue); }
+  .kpi.c-green .kpi-val  { color: var(--green); }
+  .kpi.c-orange .kpi-val { color: var(--orange); }
+  .kpi-sub { font-size: 11px; color: var(--text-3); margin-top: 4px; }
+
+  /* RESULT PANELS */
+  .result-card {
+    background: var(--bg-white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 14px;
+  }
+  .result-card:last-child { margin-bottom: 0; }
+  .result-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--blue-text);
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* MACHINE SUMMARY GRID */
+  .ms-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+  .ms-cell .ms-lbl { font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; font-weight: 500; }
+  .ms-cell .ms-val { font-size: 20px; font-weight: 700; }
+  .ms-val.blue   { color: var(--blue); }
+  .ms-val.green  { color: var(--green); }
+  .ms-val.orange { color: var(--orange); }
+
+  /* DOZ BREAKDOWN */
+  .doz-row-r {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #eef3f8;
+  }
+  .doz-row-r:last-child { border-bottom: none; padding-bottom: 0; }
+  .doz-rname { font-weight: 600; font-size: 13px; }
+  .doz-meta  { font-size: 11px; color: var(--text-3); margin-top: 3px; line-height: 1.7; }
+  .pbar { height: 5px; background: #dde8f4; border-radius: 3px; margin-top: 8px; max-width: 240px; }
+  .pbar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--blue), #5ba8f5); transition: width .8s; }
+  .mbig  { font-size: 28px; font-weight: 700; color: var(--blue); line-height: 1; text-align: right; }
+  .msub2 { font-size: 11px; color: var(--text-3); text-align: right; }
+
+  /* PRODUCTS TABLE */
+  .tbl-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th {
+    font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+    color: var(--text-3); text-align: left;
+    padding: 7px 10px; border-bottom: 2px solid var(--border);
+    white-space: nowrap; background: #f7fafd;
+  }
+  td { padding: 9px 10px; border-bottom: 1px solid #eef3f8; white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #f7fafd; }
+  .tn { text-align: right; font-variant-numeric: tabular-nums; }
+  .tprofit { text-align: right; color: var(--green); font-weight: 600; }
+  .ttotal td { border-top: 2px solid var(--border); font-weight: 600; background: var(--blue-light); }
+
+  /* CHART */
+  .chart-wrap { position: relative; height: 210px; margin-top: 4px; }
+
+  /* ANNUAL */
+  .annual-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-top: 14px; }
+  .an-lbl { font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 5px; font-weight: 500; }
+  .an-val { font-size: 22px; font-weight: 700; }
+  .an-val.blue   { color: var(--blue); }
+  .an-val.green  { color: var(--green); }
+  .an-val.orange { color: var(--orange); }
+
+  /* HINT */
+  .hint { font-size: 11px; color: var(--text-3); margin-top: 4px; line-height: 1.5; }
+
+  #results { display: none; flex-direction: column; }
+  #results.visible { display: flex; }
+  .fade-in { animation: fi .3s ease both; }
+  @keyframes fi { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #eef3f8; }
+  ::-webkit-scrollbar-thumb { background: #c5d5e8; border-radius: 3px; }
+
+  @media (max-width: 900px) {
+    .app { grid-template-columns: 1fr; }
+    .kpi-grid { grid-template-columns: 1fr 1fr; }
+    .ms-row { grid-template-columns: 1fr 1fr; }
+    .annual-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════ HEADER ══════════ -->
+<header>
+  <div class="header-left">
+    <!-- Atlas Pro logo -->
+    <a class="logo-wrap" href="#">
+      <svg class="logo-icon" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- outer triangle -->
+        <polygon points="21,3 39,36 3,36" fill="none" stroke="#2563a8" stroke-width="2.5" stroke-linejoin="round"/>
+        <!-- inner filled triangle -->
+        <polygon points="21,10 34,33 8,33" fill="#2b7de9" opacity="0.18"/>
+        <!-- middle triangle -->
+        <polygon points="21,13 31,31 11,31" fill="none" stroke="#2b7de9" stroke-width="1.5" stroke-linejoin="round"/>
+        <!-- center dot -->
+        <circle cx="21" cy="28" r="2.2" fill="#2b7de9"/>
+      </svg>
+      <div class="logo-text-block">
+        <span class="logo-name">АТЛАС</span>
+        <span class="logo-tagline">Инновационные технологии<br>для промышленной стирки</span>
+      </div>
+    </a>
+    <div class="header-divider"></div>
+    <div class="header-title">
+      <h1>Калькулятор окупаемости дозатора</h1>
+      <p>Рассчитайте срок окупаемости и прибыль от продаж моющих средств</p>
+    </div>
+  </div>
+  <button class="btn-orange" onclick="window.print()">Экспорт в PDF</button>
+</header>
+
+<!-- ══════════ MAIN ══════════ -->
+<div class="app">
+
+  <!-- ═══ LEFT COLUMN ═══ -->
+  <div class="left-col">
+
+    <!-- DOZATORS -->
+    <div class="card">
+      <div class="card-title">Дозаторы и машины</div>
+      <div id="doz-list"></div>
+      <button class="btn-add" onclick="addDoz()">+ Добавить дозатор</button>
+    </div>
+
+    <!-- PRODUCTS -->
+    <div class="card">
+      <div class="card-title" style="color: var(--orange); border-bottom-color: #fde8cc;">Моющие средства</div>
+      <div id="prod-list"></div>
+      <button class="btn-add btn-add-orange" onclick="addProd()">+ Добавить средство</button>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="card">
+      <div class="card-title">Параметры расчёта</div>
+      <div class="field" style="margin-bottom:0">
+        <label>Горизонт расчёта <span class="unit">(месяцев)</span></label>
+        <input type="number" id="horizon" value="36" min="6" max="120">
+      </div>
+    </div>
+
+    <button class="btn-calc" onclick="calculate()">Рассчитать окупаемость</button>
+  </div>
+
+  <!-- ═══ RIGHT COLUMN ═══ -->
+  <div class="right-col">
+
+    <div class="placeholder" id="placeholder">
+      <div class="ico">📊</div>
+      <p>Заполните параметры слева<br>и нажмите «Рассчитать окупаемость»</p>
+    </div>
+
+    <div id="results"></div>
+
+  </div>
+</div>
+
+<script>
+// ─── STATE ────────────────────────────────────────────
+let dozId = 0, prodId = 0;
+let dozators = [], products = [];
+
+const $ = id => document.getElementById(id);
+const val = id => parseFloat($(`${id}`)?.value) || 0;
+const str = id => $(`${id}`)?.value?.trim() || '';
+
+function fmt(n, d = 0) {
+  if (!isFinite(n)) return '∞';
+  return new Intl.NumberFormat('ru-RU', { maximumFractionDigits: d }).format(n);
+}
+function fmtRub(n) {
+  if (!isFinite(n)) return '∞ ₽';
+  return fmt(Math.round(n)) + ' ₽';
+}
+
+// ─── LIVE PREVIEW ─────────────────────────────────────
+function updateDozPreview(id) {
+  const vol    = val(`dvol-${id}`);
+  const prog   = val(`dprog-${id}`);
+  const shift  = val(`dshift-${id}`);
+  const shifts = val(`dshifts-${id}`);
+  const days   = val(`ddays-${id}`);
+  const wps    = prog > 0 ? Math.floor((shift * 60) / prog) : 0;
+  const wpd    = wps * shifts;
+  const wpm    = wpd * days;
+  const el = $(`doz-preview-${id}`);
+  if (el) el.innerHTML =
+    `⚙ <strong>${wps}</strong> стирок/смену &nbsp;·&nbsp; <strong>${wpd}</strong>/день &nbsp;·&nbsp; <strong style="color:var(--blue)">${wpm}</strong>/мес`;
+}
+
+// ─── ADD DOZATOR ──────────────────────────────────────
+function addDoz(def = {}) {
+  const id = ++dozId;
+  dozators.push(id);
+  const div = document.createElement('div');
+  div.className = 'doz-item';
+  div.id = `doz-${id}`;
+  div.innerHTML = `
+    <div class="item-hd">
+      <span class="item-name">Дозатор #${id}</span>
+      <button class="btn-del" onclick="removeDoz(${id})" title="Удалить">✕</button>
+    </div>
+    <div class="field">
+      <label>Название</label>
+      <input type="text" id="dn-${id}" value="${def.name || 'Дозатор #' + id}">
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Стоимость оборудования <span class="unit">(₽)</span></label>
+        <input type="number" id="dc-${id}" value="${def.cost ?? 25000}" min="0">
+      </div>
+      <div class="field">
+        <label>Монтаж / установка <span class="unit">(₽)</span></label>
+        <input type="number" id="di-${id}" value="${def.install ?? 3000}" min="0">
+      </div>
+    </div>
+    <div class="sub-sec">
+      <div class="sub-sec-title">Параметры машины</div>
+      <div class="row2">
+        <div class="field">
+          <label>Объём машины <span class="unit">(кг)</span></label>
+          <input type="number" id="dvol-${id}" value="${def.vol ?? 10}" min="0.1" step="0.1" oninput="updateDozPreview(${id})">
+        </div>
+        <div class="field">
+          <label>Время программы <span class="unit">(мин)</span></label>
+          <input type="number" id="dprog-${id}" value="${def.prog ?? 45}" min="1" oninput="updateDozPreview(${id})">
+        </div>
+      </div>
+      <div class="row3">
+        <div class="field">
+          <label>Длит. смены <span class="unit">(ч)</span></label>
+          <input type="number" id="dshift-${id}" value="${def.shift ?? 8}" min="0.5" step="0.5" oninput="updateDozPreview(${id})">
+        </div>
+        <div class="field">
+          <label>Смен в день</label>
+          <input type="number" id="dshifts-${id}" value="${def.shifts ?? 2}" min="1" max="4" oninput="updateDozPreview(${id})">
+        </div>
+        <div class="field">
+          <label>Раб. дней/мес</label>
+          <input type="number" id="ddays-${id}" value="${def.days ?? 22}" min="1" max="31" oninput="updateDozPreview(${id})">
+        </div>
+      </div>
+      <div class="derived" id="doz-preview-${id}">Введите параметры</div>
+    </div>
+  `;
+  $('doz-list').appendChild(div);
+  updateDozPreview(id);
+}
+
+function removeDoz(id) {
+  dozators = dozators.filter(x => x !== id);
+  $(`doz-${id}`)?.remove();
+}
+
+// ─── ADD PRODUCT ──────────────────────────────────────
+function addProd(def = {}) {
+  const id = ++prodId;
+  products.push(id);
+  const div = document.createElement('div');
+  div.className = 'prod-item';
+  div.id = `prod-${id}`;
+  div.innerHTML = `
+    <div class="item-hd">
+      <span class="item-name">Средство #${id}</span>
+      <button class="btn-del" onclick="removeProd(${id})">✕</button>
+    </div>
+    <div class="field">
+      <label>Название</label>
+      <input type="text" id="pn-${id}" value="${def.name || 'Средство #' + id}">
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Цена продажи <span class="unit">(₽/кг)</span></label>
+        <input type="number" id="ps-${id}" value="${def.sale ?? 450}" min="0" step="0.01">
+      </div>
+      <div class="field">
+        <label>Себестоимость <span class="unit">(₽/кг)</span></label>
+        <input type="number" id="pp-${id}" value="${def.cost ?? 180}" min="0" step="0.01">
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Доза <span class="unit">(мл/г на кг загрузки)</span></label>
+        <input type="number" id="pd-${id}" value="${def.dose ?? 10}" min="0.01" step="0.1">
+      </div>
+      <div class="field">
+        <label>Ёмкость канистры <span class="unit">(кг)</span></label>
+        <input type="number" id="pk-${id}" value="${def.can ?? 20}" min="0.1" step="0.1">
+      </div>
+    </div>
+    <div class="hint">💡 Расход/стирку = Доза × Объём машины (кг). Плотность ≈ 1 кг/л.</div>
+  `;
+  $('prod-list').appendChild(div);
+}
+
+function removeProd(id) {
+  products = products.filter(x => x !== id);
+  $(`prod-${id}`)?.remove();
+}
+
+// ─── CALCULATE ────────────────────────────────────────
+function calculate() {
+  const horizon = Math.min(120, Math.max(6, parseInt($('horizon').value) || 36));
+  if (!dozators.length) { alert('Добавьте хотя бы один дозатор!'); return; }
+  if (!products.length)  { alert('Добавьте хотя бы одно моющее средство!'); return; }
+
+  const dozData = dozators.map(id => {
+    const vol    = val(`dvol-${id}`);
+    const prog   = val(`dprog-${id}`);
+    const shift  = val(`dshift-${id}`);
+    const shifts = val(`dshifts-${id}`);
+    const days   = val(`ddays-${id}`);
+    const wps  = prog > 0 ? Math.floor((shift * 60) / prog) : 0;
+    const wpd  = wps * shifts;
+    const wpm  = wpd * days;
+    return {
+      id, vol, prog, shift, shifts, days,
+      washesPerShift: wps, washesPerDay: wpd, washesPerMonth: wpm,
+      name:    str(`dn-${id}`) || `Дозатор #${id}`,
+      cost:    val(`dc-${id}`),
+      install: val(`di-${id}`),
+      get invest() { return this.cost + this.install; }
+    };
+  });
+
+  const prodData = products.map(id => ({
+    id,
+    name: str(`pn-${id}`) || `Средство #${id}`,
+    sale: val(`ps-${id}`),
+    cost: val(`pp-${id}`),
+    dose: val(`pd-${id}`),
+    can:  val(`pk-${id}`),
+    get margin() { return this.sale > 0 ? (this.sale - this.cost) / this.sale * 100 : 0; }
+  }));
+
+  const totalInvest = dozData.reduce((s, d) => s + d.invest, 0);
+  let totalRevMo = 0, totalPrfMo = 0;
+
+  const prodRows = prodData.map(p => {
+    let revMo = 0, cstMo = 0, kgMo = 0, canMo = 0;
+    dozData.forEach(d => {
+      const kgPerWash = p.dose * d.vol / 1000;
+      const kgM = kgPerWash * d.washesPerMonth;
+      revMo += kgM * p.sale;
+      cstMo += kgM * p.cost;
+      kgMo  += kgM;
+      canMo += kgM / p.can;
+    });
+    const prfMo = revMo - cstMo;
+    totalRevMo += revMo;
+    totalPrfMo += prfMo;
+    return { ...p, revMo, cstMo, prfMo, kgMo, canMo };
+  });
+
+  const globalPayback    = totalPrfMo > 0 ? totalInvest / totalPrfMo : Infinity;
+  const profitAtHorizon  = totalPrfMo * horizon - totalInvest;
+  const curve = Array.from({ length: horizon + 1 }, (_, m) =>
+    m === 0 ? -totalInvest : totalPrfMo * m - totalInvest
+  );
+  const dozAnalysis = dozData.map(d => ({
+    ...d, payback: totalPrfMo > 0 ? d.invest / totalPrfMo : Infinity
+  }));
+
+  render({ dozData, dozAnalysis, prodRows, totalRevMo, totalPrfMo, totalInvest, globalPayback, curve, profitAtHorizon, horizon });
+}
+
+// ─── RENDER ───────────────────────────────────────────
+function render(d) {
+  $('placeholder').style.display = 'none';
+  const res = $('results');
+  res.innerHTML = '';
+  res.className = 'visible fade-in';
+
+  const { dozData, dozAnalysis, prodRows, totalRevMo, totalPrfMo, totalInvest, globalPayback, curve, profitAtHorizon, horizon } = d;
+  const pb = isFinite(globalPayback) && globalPayback < 1000;
+  const totalWpm   = dozData.reduce((s, d) => s + d.washesPerMonth, 0);
+  const totalKgMo  = prodRows.reduce((s, p) => s + p.kgMo, 0);
+  const totalCanMo = prodRows.reduce((s, p) => s + p.canMo, 0);
+
+  // ── KPI
+  const kpiDiv = document.createElement('div');
+  kpiDiv.className = 'kpi-grid';
+  kpiDiv.innerHTML = `
+    <div class="kpi c-blue">
+      <div class="kpi-lbl">Срок окупаемости</div>
+      <div class="kpi-val">${pb ? Math.ceil(globalPayback) + ' мес' : '∞'}</div>
+      <div class="kpi-sub">${pb ? 'до полной окупаемости' : 'недостаточно прибыли'}</div>
+    </div>
+    <div class="kpi c-green">
+      <div class="kpi-lbl">Прибыль в месяц</div>
+      <div class="kpi-val">${fmtRub(totalPrfMo)}</div>
+      <div class="kpi-sub">выручка ${fmtRub(totalRevMo)}</div>
+    </div>
+    <div class="kpi c-orange">
+      <div class="kpi-lbl">Инвестиции</div>
+      <div class="kpi-val">${fmtRub(totalInvest)}</div>
+      <div class="kpi-sub">оборудование + монтаж</div>
+    </div>
+    <div class="kpi c-green">
+      <div class="kpi-lbl">Прибыль за ${horizon} мес</div>
+      <div class="kpi-val">${fmtRub(Math.max(0, profitAtHorizon))}</div>
+      <div class="kpi-sub">${profitAtHorizon < 0 ? '⚠ убыток ' + fmtRub(-profitAtHorizon) : 'после окупаемости'}</div>
+    </div>
+    <div class="kpi c-blue">
+      <div class="kpi-lbl">Средняя маржа</div>
+      <div class="kpi-val">${totalRevMo > 0 ? fmt(totalPrfMo / totalRevMo * 100, 1) + '%' : '—'}</div>
+      <div class="kpi-sub">по всем средствам</div>
+    </div>
+    <div class="kpi c-orange">
+      <div class="kpi-lbl">ROI за ${horizon} мес</div>
+      <div class="kpi-val">${totalInvest > 0 && profitAtHorizon > 0 ? fmt(profitAtHorizon / totalInvest * 100, 0) + '%' : '—'}</div>
+      <div class="kpi-sub">возврат инвестиций</div>
+    </div>
+  `;
+  res.appendChild(kpiDiv);
+
+  // ── MACHINE LOAD SUMMARY
+  const ms = document.createElement('div');
+  ms.className = 'result-card';
+  ms.innerHTML = `
+    <div class="result-card-title">Нагрузка — в месяц</div>
+    <div class="ms-row">
+      <div class="ms-cell"><div class="ms-lbl">Стирок / мес</div><div class="ms-val blue">${fmt(totalWpm)}</div></div>
+      <div class="ms-cell"><div class="ms-lbl">Расход средств</div><div class="ms-val orange">${fmt(totalKgMo,1)} кг</div></div>
+      <div class="ms-cell"><div class="ms-lbl">Канистр / мес</div><div class="ms-val green">${fmt(totalCanMo,1)} шт</div></div>
+      <div class="ms-cell"><div class="ms-lbl">Дозаторов</div><div class="ms-val blue">${dozData.length} шт</div></div>
+    </div>
+  `;
+  res.appendChild(ms);
+
+  // ── CHART
+  const chartCard = document.createElement('div');
+  chartCard.className = 'result-card';
+  chartCard.innerHTML = `
+    <div class="result-card-title">Накопленный денежный поток</div>
+    <div class="chart-wrap"><canvas id="roi-canvas"></canvas></div>
+  `;
+  res.appendChild(chartCard);
+  setTimeout(() => drawChart('roi-canvas', curve, horizon, globalPayback), 40);
+
+  // ── DOZ BREAKDOWN
+  const bk = document.createElement('div');
+  bk.className = 'result-card';
+  bk.innerHTML = `<div class="result-card-title">Окупаемость по дозаторам</div>` +
+    dozAnalysis.map(dz => {
+      const pct  = isFinite(dz.payback) ? Math.min(100, (dz.payback / horizon) * 100) : 100;
+      const pbOk = isFinite(dz.payback) && dz.payback < 1000;
+      return `
+      <div class="doz-row-r">
+        <div style="flex:1">
+          <div class="doz-rname">${dz.name}</div>
+          <div class="doz-meta">
+            Машина ${dz.vol} кг · программа ${dz.prog} мин · смена ${dz.shift} ч × ${dz.shifts}/день · ${dz.days} дней/мес<br>
+            ${fmt(dz.washesPerShift)} ст/смену · ${fmt(dz.washesPerDay)} ст/день · <strong style="color:var(--blue)">${fmt(dz.washesPerMonth)} ст/мес</strong><br>
+            Инвестиции: ${fmtRub(dz.cost)} + ${fmtRub(dz.install)} = <strong>${fmtRub(dz.invest)}</strong>
+          </div>
+          <div class="pbar"><div class="pbar-fill" style="width:${pct}%"></div></div>
+        </div>
+        <div style="margin-left:20px;flex-shrink:0">
+          <div class="mbig">${pbOk ? Math.ceil(dz.payback) : '∞'}</div>
+          <div class="msub2">мес. окупаемость</div>
+        </div>
+      </div>`;
+    }).join('');
+  res.appendChild(bk);
+
+  // ── PRODUCTS TABLE
+  const tbl = document.createElement('div');
+  tbl.className = 'result-card';
+  tbl.innerHTML = `
+    <div class="result-card-title">Детализация по средствам — в месяц</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Средство</th>
+            <th style="text-align:right">Доза</th>
+            <th style="text-align:right">Цена / кг</th>
+            <th style="text-align:right">С/С / кг</th>
+            <th style="text-align:right">Маржа</th>
+            <th style="text-align:right">Расход, кг</th>
+            <th style="text-align:right">Канистр</th>
+            <th style="text-align:right">Выручка</th>
+            <th style="text-align:right">Прибыль</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${prodRows.map(p => `
+            <tr>
+              <td style="font-weight:500">${p.name}</td>
+              <td class="tn">${fmt(p.dose,1)} мл/кг</td>
+              <td class="tn">${fmtRub(p.sale)}</td>
+              <td class="tn">${fmtRub(p.cost)}</td>
+              <td class="tn">${fmt(p.margin,1)}%</td>
+              <td class="tn">${fmt(p.kgMo,2)}</td>
+              <td class="tn">${fmt(p.canMo,2)}</td>
+              <td class="tn">${fmtRub(p.revMo)}</td>
+              <td class="tprofit">+ ${fmtRub(p.prfMo)}</td>
+            </tr>
+          `).join('')}
+          <tr class="ttotal">
+            <td colspan="5">Итого</td>
+            <td class="tn">${fmt(totalKgMo,2)}</td>
+            <td class="tn">${fmt(totalCanMo,2)}</td>
+            <td class="tn">${fmtRub(d.totalRevMo)}</td>
+            <td class="tprofit">+ ${fmtRub(d.totalPrfMo)}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  `;
+  res.appendChild(tbl);
+
+  // ── ANNUAL
+  const ann = document.createElement('div');
+  ann.className = 'result-card';
+  ann.innerHTML = `
+    <div class="result-card-title">Прогноз — 12 месяцев</div>
+    <div class="annual-grid">
+      <div><div class="an-lbl">Выручка за год</div><div class="an-val blue">${fmtRub(totalRevMo * 12)}</div></div>
+      <div><div class="an-lbl">Прибыль за год</div><div class="an-val green">${fmtRub(totalPrfMo * 12)}</div></div>
+      <div><div class="an-lbl">Канистр за год</div><div class="an-val orange">${fmt(totalCanMo * 12, 0)} шт</div></div>
+    </div>
+  `;
+  res.appendChild(ann);
+}
+
+// ─── CANVAS CHART ─────────────────────────────────────
+function drawChart(canvasId, curve, horizon, payback) {
+  const canvas = $(canvasId);
+  if (!canvas) return;
+  const W   = canvas.parentElement.clientWidth;
+  const H   = 210;
+  const DPR = window.devicePixelRatio || 1;
+  canvas.width  = W * DPR;
+  canvas.height = H * DPR;
+  canvas.style.width  = W + 'px';
+  canvas.style.height = H + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(DPR, DPR);
+
+  const P = { t:14, r:16, b:30, l:88 };
+  const cw = W - P.l - P.r;
+  const ch = H - P.t - P.b;
+  const minV = Math.min(...curve);
+  const maxV = Math.max(...curve);
+  const range = (maxV - minV) || 1;
+
+  const tx = m => P.l + (m / horizon) * cw;
+  const ty = v => P.t + ch - ((v - minV) / range) * ch;
+
+  // grid bg
+  ctx.fillStyle = '#f7fafd';
+  ctx.fillRect(P.l, P.t, cw, ch);
+
+  // grid lines + y labels
+  ctx.font = '11px Inter';
+  ctx.fillStyle = '#8a9ab0';
+  ctx.textAlign = 'right';
+  [0,1,2,3,4].forEach(s => {
+    const v = minV + (range / 4) * s;
+    const y = ty(v);
+    const abs = Math.abs(v);
+    const lbl = abs >= 1000000 ? fmt(v/1000000,1)+' млн'
+              : abs >= 1000    ? fmt(v/1000,0)+' тыс'
+              : fmt(v,0);
+    ctx.fillText(lbl + ' ₽', P.l - 6, y + 4);
+    ctx.strokeStyle = '#dde8f4';
+    ctx.lineWidth = 0.8;
+    ctx.beginPath(); ctx.moveTo(P.l, y); ctx.lineTo(P.l + cw, y); ctx.stroke();
+  });
+
+  // zero line
+  ctx.strokeStyle = '#b0c8e4';
+  ctx.lineWidth = 1.2;
+  ctx.setLineDash([4,5]);
+  ctx.beginPath(); ctx.moveTo(P.l, ty(0)); ctx.lineTo(P.l+cw, ty(0)); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // payback vertical
+  if (isFinite(payback) && payback <= horizon) {
+    const px = tx(payback);
+    ctx.strokeStyle = 'rgba(43,125,233,.5)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([5,4]);
+    ctx.beginPath(); ctx.moveTo(px, P.t); ctx.lineTo(px, P.t + ch); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = 'rgba(43,125,233,.9)';
+    ctx.font = '11px Inter';
+    ctx.textAlign = 'left';
+    const lx = (px + 80 > W - P.r) ? px - 78 : px + 4;
+    ctx.fillText('↑ ' + Math.ceil(payback) + ' мес', lx, P.t + 14);
+  }
+
+  // negative area (below zero)
+  const zy = ty(0);
+  const gradNeg = ctx.createLinearGradient(0, zy, 0, P.t + ch);
+  gradNeg.addColorStop(0, 'rgba(217,59,59,.08)');
+  gradNeg.addColorStop(1, 'rgba(217,59,59,.18)');
+  ctx.fillStyle = gradNeg;
+  ctx.beginPath();
+  ctx.moveTo(tx(0), Math.min(zy, ty(curve[0])));
+  curve.forEach((v, m) => { if (v < 0) ctx.lineTo(tx(m), ty(v)); });
+  // close below zero
+  const lastNeg = curve.findIndex((v, i) => i > 0 && v >= 0);
+  if (lastNeg > 0) ctx.lineTo(tx(lastNeg-1), zy);
+  ctx.lineTo(tx(0), zy);
+  ctx.closePath(); ctx.fill();
+
+  // positive area
+  const gradPos = ctx.createLinearGradient(0, P.t, 0, zy);
+  gradPos.addColorStop(0, 'rgba(26,158,92,.18)');
+  gradPos.addColorStop(1, 'rgba(26,158,92,.04)');
+  ctx.fillStyle = gradPos;
+  ctx.beginPath();
+  ctx.moveTo(tx(0), ty(Math.max(0, curve[0])));
+  curve.forEach((v, m) => { if (v >= 0) ctx.lineTo(tx(m), ty(v)); });
+  const firstPos = curve.findIndex(v => v >= 0);
+  if (firstPos > 0) ctx.lineTo(tx(firstPos), zy);
+  ctx.lineTo(tx(0), zy);
+  ctx.closePath(); ctx.fill();
+
+  // main line
+  ctx.strokeStyle = '#2b7de9';
+  ctx.lineWidth = 2.5;
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  curve.forEach((v, m) => m === 0 ? ctx.moveTo(tx(m), ty(v)) : ctx.lineTo(tx(m), ty(v)));
+  ctx.stroke();
+
+  // x labels
+  ctx.fillStyle = '#8a9ab0';
+  ctx.textAlign = 'center';
+  ctx.font = '11px Inter';
+  const step = Math.ceil(horizon / 6);
+  for (let m = 0; m <= horizon; m += step) ctx.fillText(m + ' м', tx(m), H - 4);
+
+  // border
+  ctx.strokeStyle = '#dde8f4';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(P.l, P.t, cw, ch);
+}
+
+// ─── INIT ─────────────────────────────────────────────
+addDoz({ name: 'Машина 1 (10 кг)', cost: 25000, install: 3000, vol: 10, prog: 45, shift: 8, shifts: 2, days: 22 });
+addProd({ name: 'Стиральное жидкое', sale: 450, cost: 178, dose: 10, can: 20 });
+addProd({ name: 'Кондиционер',       sale: 320, cost: 120, dose: 4,  can: 20 });
+addProd({ name: 'Отбеливатель',      sale: 280, cost: 100, dose: 7,  can: 10 });
+</script>
+</body>
+</html>
